@@ -3,38 +3,366 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#0d0b1b">
 <title>GAME SHOP</title>
 <style>
-body {
-  background: #101020;
-  color: white;
-  text-align: center;
-  font-family: Arial, sans-serif;
-  padding: 30px 15px;
-}
-button {
-  background: #7655ff;
-  color: white;
-  border: 0;
-  border-radius: 15px;
-  padding: 18px;
-  font-size: 18px;
-  margin: 10px;
-}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#0d0b1b;color:white;font-family:Arial,sans-serif;overscroll-behavior:none}
+body{user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+button{touch-action:manipulation;cursor:pointer;font-family:inherit}
+header{padding:22px 16px 12px;text-align:center;background:linear-gradient(160deg,#31205c,#121026)}
+.logo{font-size:29px;font-weight:900;letter-spacing:1px}
+.sub{color:#aaa5c7;font-size:13px;margin-top:7px}
+.balance{display:inline-block;margin:18px 0 6px;padding:13px 25px;border:1px solid #7658ce;background:#241b43;border-radius:25px;font-size:23px;font-weight:bold}
+main{padding:17px 14px 100px;max-width:540px;margin:auto}
+h2{font-size:21px;margin:12px 0 16px}
+.card{background:#1b1731;border:1px solid #393055;border-radius:20px;padding:18px;margin:13px 0;box-shadow:0 6px 22px #0003}
+.card h3{margin:0 0 9px;font-size:19px}
+.card p{color:#b9b3d0;line-height:1.5;font-size:14px}
+.btn{display:block;width:100%;border:0;background:linear-gradient(110deg,#8155ff,#a34cff);color:white;border-radius:14px;padding:15px;font-size:16px;font-weight:bold;margin-top:12px}
+.btn:disabled{background:#49415f;color:#b7b0c5}
+.secondary{background:#34294f}
+.hidden{display:none!important}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{background:#211b3d;border:1px solid #48396b;border-radius:18px;padding:22px 10px;text-align:center;font-weight:bold;min-height:125px}
+.tile span{display:block;font-size:40px;margin-bottom:12px}
+nav{position:fixed;bottom:0;left:0;width:100%;display:flex;background:#18132d;border-top:1px solid #463665;padding:10px 5px max(12px,env(safe-area-inset-bottom));z-index:20}
+nav button{flex:1;background:none;border:0;color:#b8acd6;font-size:13px;padding:8px 0}
+nav button.active{color:#b994ff;font-weight:bold}
+.stat{display:flex;justify-content:space-between;gap:10px;color:#d9d2f0;font-size:15px;margin:14px 0}
+.center{text-align:center}
+.note{color:#a99fc4;font-size:12px;line-height:1.5}
+#arena{position:relative;height:350px;background:linear-gradient(#20194b,#100f28);border:2px solid #59458d;border-radius:18px;overflow:hidden;touch-action:none}
+#basket{position:absolute;bottom:12px;left:calc(50% - 29px);width:58px;height:45px;font-size:42px;text-align:center;z-index:2}
+.drop{position:absolute;top:-50px;font-size:31px;width:38px;height:38px;text-align:center}
+#memoryBoard{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:18px 0}
+.mem{height:76px;background:#392762;border:1px solid #7554b6;border-radius:13px;font-size:31px;color:white}
+.mem.open{background:#6a4bad}
+#reactionTrack{position:relative;height:60px;background:#302447;border-radius:14px;overflow:hidden;margin:25px 0}
+#target{position:absolute;left:43%;width:14%;height:100%;background:#31c984}
+#marker{position:absolute;left:0;width:8px;height:100%;background:#fff;box-shadow:0 0 12px white}
+#wheel{width:260px;height:260px;border-radius:50%;margin:24px auto;background:conic-gradient(#6d40f5 0 60deg,#e0a329 60deg 120deg,#a143d5 120deg 180deg,#347bc7 180deg 240deg,#e55b78 240deg 300deg,#36a78b 300deg 360deg);border:9px solid #c5a0ff;display:grid;place-items:center;font-size:52px;transition:transform 3.5s cubic-bezier(.12,.72,.14,1)}
+#wheel::after{content:"🎁";display:grid;place-items:center;background:#17112c;width:92px;height:92px;border-radius:50%;border:5px solid white}
+.prize{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px;background:#261e40;border-radius:14px;margin:10px 0}
+.prize button{background:#6950a3;border:0;color:white;border-radius:10px;padding:10px}
 </style>
 </head>
 <body>
-<h1>🎮 GAME SHOP</h1>
-<h2>🪙 Монеты: <span id="coins">0</span></h2>
-<button onclick="earn()">🪙 Собрать монету</button>
-<p>🎁 Магазин призов скоро откроется!</p>
+<header>
+<div class="logo">🎮 GAME SHOP</div>
+<div class="sub">Играй • Побеждай • Собирай награды</div>
+<div class="balance">🪙 <span id="coins">0</span> монет</div>
+</header>
+
+<main>
+<section id="home">
+<h2>🔥 Игровая зона</h2>
+<div class="card">
+<h3>🎁 Ежедневный бонус</h3>
+<p>Заходи каждый день и получай 25 монет.</p>
+<button class="btn" id="dailyBtn" onclick="daily()">Получить +25 🪙</button>
+</div>
+<div class="grid">
+<button class="tile" onclick="show('catchGame')"><span>🧺</span>Лови монеты</button>
+<button class="tile" onclick="show('memoryGame')"><span>🧠</span>Найди пару</button>
+<button class="tile" onclick="show('reactionGame')"><span>⚡</span>Реакция</button>
+<button class="tile" onclick="show('wheelGame')"><span>🎡</span>Колесо</button>
+</div>
+<div class="card center">
+<h3>🏆 Твой прогресс</h3>
+<p>Сыграно раундов: <b id="rounds">0</b></p>
+<p class="note">Это тестовые монеты. Обмен на реальные товары пока отключён.</p>
+</div>
+</section>
+
+<section id="catchGame" class="hidden">
+<h2>🧺 Лови монеты</h2>
+<p>Двигай корзину пальцем. Лови 🪙 и избегай 💣.</p>
+<div class="stat"><span>⏱ <b id="catchTime">30</b> сек.</span><span>Счёт: <b id="catchScore">0</b></span></div>
+<div id="arena"><div id="basket">🧺</div></div>
+<button class="btn" id="catchBtn" onclick="startCatch()">Начать раунд</button>
+<p class="note">За каждую пойманную монету начисляется 1 тестовая монета в конце раунда.</p>
+</section>
+
+<section id="memoryGame" class="hidden">
+<h2>🧠 Найди пару</h2>
+<p>Найди 6 одинаковых пар. Запоминай расположение карт!</p>
+<div class="stat"><span>Ходы: <b id="moves">0</b></span><span>Пар: <b id="pairs">0</b>/6</span></div>
+<div id="memoryBoard"></div>
+<button class="btn" onclick="startMemory()">Новая игра</button>
+<p class="note">За победу: до 30 тестовых монет.</p>
+</section>
+
+<section id="reactionGame" class="hidden">
+<h2>⚡ Проверка реакции</h2>
+<p>Останови белый бегунок в зелёной зоне.</p>
+<div id="reactionTrack"><div id="target"></div><div id="marker"></div></div>
+<p class="center" id="reactionText">Нажми «Старт»</p>
+<button class="btn" id="reactionBtn" onclick="reactionAction()">Старт</button>
+<p class="note">Точное попадание: +15 монет. Близкое: +5.</p>
+</section>
+
+<section id="wheelGame" class="hidden">
+<h2>🎡 Колесо удачи</h2>
+<p>Один бесплатный запуск в день.</p>
+<div id="wheel"></div>
+<p class="center" id="wheelText">Испытай удачу!</p>
+<button class="btn" id="wheelBtn" onclick="spinWheel()">Крутить колесо</button>
+</section>
+
+<section id="shop" class="hidden">
+<h2>🎁 Магазин призов</h2>
+<div class="card">
+<h3>Скоро открытие</h3>
+<p>Здесь появятся товары твоего магазина с ценами в монетах.</p>
+<div class="prize"><span>🎁 Приз №1</span><button disabled>Скоро</button></div>
+<div class="prize"><span>🎁 Приз №2</span><button disabled>Скоро</button></div>
+<div class="prize"><span>🎁 Приз №3</span><button disabled>Скоро</button></div>
+<p class="note">Покупка и обмен монет отключены до подключения защищённой базы данных.</p>
+</div>
+</section>
+
+<section id="profile" class="hidden">
+<h2>👤 Профиль</h2>
+<div class="card center">
+<div style="font-size:60px">🎮</div>
+<h3 id="playerName">Игрок GAME SHOP</h3>
+<p>Баланс: <b id="profileCoins">0</b> 🪙</p>
+<p>Сыграно раундов: <b id="profileRounds">0</b></p>
+<p class="note">Прогресс хранится только в этом браузере на устройстве. Это не защищённый игровой аккаунт.</p>
+</div>
+</section>
+</main>
+
+<nav>
+<button id="navHome" class="active" onclick="show('home')">🏠<br>Главная</button>
+<button id="navGames" onclick="show('home')">🎮<br>Игры</button>
+<button id="navShop" onclick="show('shop')">🎁<br>Призы</button>
+<button id="navProfile" onclick="show('profile')">👤<br>Профиль</button>
+</nav>
+
 <script>
-let coins = 0;
-function earn() {
-  coins++;
-  document.getElementById("coins").textContent = coins;
+const tg=window.Telegram?.WebApp;
+if(tg){tg.ready();tg.expand()}
+let data;
+try{data=JSON.parse(localStorage.getItem('gs_v2'))||{}}
+catch(e){data={}}
+data.coins=Number(data.coins)||0;
+data.rounds=Number(data.rounds)||0;
+data.daily=data.daily||'';
+data.wheel=data.wheel||'';
+const $=id=>document.getElementById(id);
+const today=()=>new Date().toLocaleDateString('en-CA');
+function save(){
+ localStorage.setItem('gs_v2',JSON.stringify(data));
+ update();
 }
+function update(){
+ $('coins').textContent=data.coins;
+ $('rounds').textContent=data.rounds;
+ $('profileCoins').textContent=data.coins;
+ $('profileRounds').textContent=data.rounds;
+ $('dailyBtn').disabled=data.daily===today();
+ $('dailyBtn').textContent=data.daily===today()?'Бонус уже получен':'Получить +25 🪙';
+ $('wheelBtn').disabled=data.wheel===today()||wheelBusy;
+}
+function reward(amount){
+ data.coins+=amount;
+ save();
+}
+function daily(){
+ if(data.daily===today())return;
+ data.daily=today();
+ reward(25);
+ alert('🎁 Ты получил 25 монет!');
+}
+const sections=['home','catchGame','memoryGame','reactionGame','wheelGame','shop','profile'];
+function show(id){
+ stopCatch();
+ stopReaction();
+ sections.forEach(s=>$(s).classList.toggle('hidden',s!==id));
+ ['navHome','navGames','navShop','navProfile'].forEach(n=>$(n).classList.remove('active'));
+ $(id==='shop'?'navShop':id==='profile'?'navProfile':'navHome').classList.add('active');
+ window.scrollTo(0,0);
+ update();
+}
+$('playerName').textContent=tg?.initDataUnsafe?.user?.first_name||'Игрок GAME SHOP';
+
+// GAME 1: CATCH
+let catchTimer=null,spawnTimer=null,fallTimer=null;
+let catchRunning=false,catchScore=0,seconds=30,drops=[];
+const arena=$('arena'),basket=$('basket');
+function moveBasket(x){
+ const rect=arena.getBoundingClientRect();
+ const left=Math.max(0,Math.min(rect.width-58,x-rect.left-29));
+ basket.style.left=left+'px';
+}
+arena.addEventListener('pointermove',e=>{
+ if(catchRunning)moveBasket(e.clientX);
+});
+arena.addEventListener('pointerdown',e=>{
+ if(catchRunning){arena.setPointerCapture(e.pointerId);moveBasket(e.clientX)}
+});
+function clearDrops(){
+ drops.forEach(d=>d.el.remove());
+ drops=[];
+}
+function stopCatch(){
+ clearInterval(catchTimer);
+ clearInterval(spawnTimer);
+ clearInterval(fallTimer);
+ catchRunning=false;
+ clearDrops();
+ $('catchBtn').disabled=false;
+}
+function startCatch(){
+ stopCatch();
+ catchRunning=true;catchScore=0;seconds=30;
+ $('catchScore').textContent=0;
+ $('catchTime').textContent=30;
+ $('catchBtn').disabled=true;
+ spawnTimer=setInterval(()=>{
+  const bomb=Math.random()<0.23;
+  const el=document.createElement('div');
+  el.className='drop';
+  el.textContent=bomb?'💣':'🪙';
+  const x=Math.random()*Math.max(1,arena.clientWidth-38);
+  el.style.left=x+'px';
+  arena.appendChild(el);
+  drops.push({el,x,y:-40,bomb});
+ },520);
+ fallTimer=setInterval(()=>{
+  const basketX=parseFloat(basket.style.left)||0;
+  const bottom=arena.clientHeight-55;
+  for(let i=drops.length-1;i>=0;i--){
+   const d=drops[i];
+   d.y+=4.2;
+   d.el.style.top=d.y+'px';
+   if(d.y>=bottom&&d.y<bottom+32&&d.x+32>basketX&&d.x<basketX+58){
+    if(d.bomb)catchScore=Math.max(0,catchScore-3);
+    else catchScore++;
+    $('catchScore').textContent=catchScore;
+    d.el.remove();drops.splice(i,1);
+   }else if(d.y>arena.clientHeight){
+    d.el.remove();drops.splice(i,1);
+   }
+  }
+ },30);
+ catchTimer=setInterval(()=>{
+  seconds--;
+  $('catchTime').textContent=seconds;
+  if(seconds<=0){
+   const earned=catchScore;
+   stopCatch();
+   data.rounds++;
+   reward(earned);
+   alert('Раунд окончен! +'+earned+' 🪙');
+  }
+ },1000);
+}
+
+// GAME 2: MEMORY
+let cards=[],opened=[],matched=0,moves=0,locked=false,memTimeout=null;
+function startMemory(){
+ clearTimeout(memTimeout);
+ const icons=['🍒','💎','⭐','🍀','🚀','👑'];
+ cards=[...icons,...icons].sort(()=>Math.random()-.5);
+ opened=[];matched=0;moves=0;locked=false;
+ $('moves').textContent=0;$('pairs').textContent=0;
+ $('memoryBoard').innerHTML='';
+ cards.forEach((v,i)=>{
+  const b=document.createElement('button');
+  b.className='mem';b.textContent='❔';
+  b.onclick=()=>flip(i);
+  $('memoryBoard').appendChild(b);
+ });
+}
+function flip(i){
+ if(locked||opened.includes(i))return;
+ const buttons=[...$('memoryBoard').children];
+ if(buttons[i].disabled)return;
+ buttons[i].textContent=cards[i];
+ buttons[i].classList.add('open');
+ opened.push(i);
+ if(opened.length===2){
+  moves++;$('moves').textContent=moves;
+  const [a,b]=opened;
+  if(cards[a]===cards[b]){
+   buttons[a].disabled=buttons[b].disabled=true;
+   opened=[];matched++;
+   $('pairs').textContent=matched;
+   if(matched===6){
+    const earned=Math.max(10,35-moves);
+    data.rounds++;reward(earned);
+    setTimeout(()=>alert('Все пары найдены! +'+earned+' 🪙'),250);
+   }
+  }else{
+   locked=true;
+   memTimeout=setTimeout(()=>{
+    [a,b].forEach(j=>{
+     buttons[j].textContent='❔';
+     buttons[j].classList.remove('open');
+    });
+    opened=[];locked=false;
+   },800);
+  }
+ }
+}
+
+// GAME 3: REACTION
+let reactionFrame=null,reactionStart=0,reactionActive=false;
+function stopReaction(){
+ cancelAnimationFrame(reactionFrame);
+ reactionActive=false;
+ $('reactionBtn').textContent='Старт';
+}
+function reactionAction(){
+ if(!reactionActive){
+  reactionActive=true;
+  reactionStart=performance.now();
+  $('reactionBtn').textContent='СТОП!';
+  $('reactionText').textContent='Лови зелёную зону!';
+  function animate(t){
+   if(!reactionActive)return;
+   const pos=(Math.sin((t-reactionStart)/340)+1)/2*92;
+   $('marker').style.left=pos+'%';
+   reactionFrame=requestAnimationFrame(animate);
+  }
+  reactionFrame=requestAnimationFrame(animate);
+ }else{
+  const pos=parseFloat($('marker').style.left)||0;
+  stopReaction();
+  const earned=pos>=42&&pos<=56?15:pos>=35&&pos<=63?5:0;
+  data.rounds++;
+  reward(earned);
+  $('reactionText').textContent=earned?'Попадание! +'+earned+' 🪙':'Мимо! Попробуй снова.';
+ }
+}
+
+// GAME 4: WHEEL
+let wheelBusy=false,wheelAngle=0;
+function spinWheel(){
+ if(wheelBusy||data.wheel===today())return;
+ wheelBusy=true;
+ $('wheelBtn').disabled=true;
+ $('wheelText').textContent='Колесо вращается...';
+ const rewards=[5,10,15,20,25,50];
+ const index=Math.floor(Math.random()*6);
+ wheelAngle+=1800+360-index*60;
+ $('wheel').style.transform='rotate('+wheelAngle+'deg)';
+ setTimeout(()=>{
+  const earned=rewards[index];
+  data.wheel=today();
+  data.rounds++;
+  wheelBusy=false;
+  reward(earned);
+  $('wheelText').textContent='🎉 Твой приз: +'+earned+' 🪙';
+ },3600);
+}
+startMemory();
+update();
 </script>
 </body>
 </html>
+
