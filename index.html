@@ -3,315 +3,442 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0b1020">
-<title>GAME SHOP</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>GAME SHOP 2.0</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#0b1020;color:#fff;font-family:Arial,sans-serif}
-header{text-align:center;padding:25px 15px;background:#141d35}
-h1{margin:0;color:#80f7c2;font-size:30px}
-small,.muted{color:#aab5cf}
-.balance{font-size:25px;font-weight:bold;margin-top:15px;color:#ffd76a}
-main{max-width:540px;margin:auto;padding:15px 15px 100px}
-.card{background:#17213a;border:1px solid #293655;border-radius:17px;padding:18px;margin-bottom:15px}
+body{margin:0;background:#08091a;color:white;font-family:Arial,sans-serif}
+header{text-align:center;padding:19px;background:linear-gradient(135deg,#211044,#101c42)}
+h1{margin:0;color:#00f5ff;text-shadow:0 0 15px #00f5ff;font-size:29px}
+.sub{color:#a9b3d5;font-size:12px}
+.balance{font-size:26px;color:#ffe16a;font-weight:bold;margin-top:12px}
+main{max-width:520px;margin:auto;padding:14px 14px 100px}
+.card{background:#151936;border:1px solid #393e73;border-radius:17px;padding:15px;margin-bottom:14px}
 h2{font-size:20px;margin:0 0 12px}
-p{line-height:1.5}
-button{border:0;border-radius:12px;padding:13px 16px;background:#80f7c2;color:#08131a;font-weight:bold;font-size:15px;cursor:pointer}
+p{line-height:1.45}
+button{border:0;border-radius:11px;background:#00dce8;color:#07101d;font-size:15px;font-weight:bold;padding:12px;cursor:pointer}
 button:disabled{opacity:.4}
-.btn2{background:#293b60;color:white}
-.full{width:100%;margin-top:10px}
-nav{position:fixed;bottom:0;left:0;right:0;background:#111a30;display:flex;justify-content:space-around;padding:10px 4px 20px;border-top:1px solid #34415d}
-nav button{background:transparent;color:#c2cee5;font-size:12px;padding:8px}
-nav button.active{color:#80f7c2}
+.secondary{background:#30395d;color:white}
+.full{width:100%;margin-top:9px}
 .page{display:none}
 .page.active{display:block}
-.stat{background:#0e172b;border-radius:10px;padding:12px;margin:10px 0}
-input{width:100%;padding:13px;border-radius:10px;border:1px solid #425276;background:#0c1528;color:white;font-size:16px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-.tile{height:82px;font-size:32px;background:#26395e;color:white}
-.tile.hit{background:#80f7c2;color:#07121b}
-.prize{display:flex;gap:12px;align-items:center}
-.emoji{font-size:45px}
-hr{border:0;border-top:1px solid #33415d;margin:15px 0}
-.note{font-size:12px;color:#aab5cf}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;background:#10132c;border-top:1px solid #41457c;padding:9px 2px 20px;z-index:10}
+nav button{background:none;color:#b3bddc;padding:7px 3px;font-size:11px}
+nav button.active{color:#00f5ff}
+.gamecanvas{width:100%;height:auto;display:block;background:#070d23;border:1px solid #454d86;border-radius:12px;touch-action:none}
+.stats{background:#0c1128;border-radius:10px;padding:12px;margin:10px 0}
+.controls{display:flex;gap:9px;margin-top:10px}
+.controls button{flex:1;touch-action:none}
+.small{font-size:12px;color:#a9b3d5}
+.pill{display:inline-block;padding:5px 9px;border-radius:30px;background:#293258;color:#9efaff;font-size:12px}
+.gamebox{display:none}
+.gamebox.active{display:block}
+.gamepick{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.gamepick button{min-height:70px;background:#252d58;color:#fff}
 </style>
 </head>
 <body>
 
 <header>
-<h1>🎮 GAME SHOP</h1>
-<p class="muted">Играй • Копи монеты • Получай призы</p>
-<div class="balance">🪙 <span id="balance">0</span></div>
-<small>Демонстрационный баланс</small>
+<h1>⚡ GAME SHOP 2.0</h1>
+<div class="sub">NEON ARCADE • ПЯТЬ ИГР</div>
+<div class="balance">🪙 <span id="coins">0</span></div>
+<div class="sub">Тестовые игровые монеты</div>
 </header>
 
 <main>
+
 <section id="home" class="page active">
 <div class="card">
-<h2>👋 Добро пожаловать!</h2>
-<p>Проходи мини-игры, приглашай друзей и копи монеты для обмена на призы.</p>
-<div class="stat">🎮 Заработано за игры сегодня: <b id="earned">0</b> / 30</div>
-<div class="stat">👥 Бонусы за друзей сегодня: <b id="refearned">0</b> / 200</div>
-<p class="note">Это тестовая версия. Реальные награды пока не оформляются.</p>
+<h2>🚀 Игровая арена</h2>
+<p>Пять игр. Проходи сложные испытания, улучшай рекорды и собирай виртуальные монеты.</p>
+<div class="stats">🎮 За игры сегодня: <b id="daily">0</b> / 30</div>
+<div class="stats">🏆 Лучший результат: <b id="best">0</b></div>
+<button class="full" onclick="openPage('games')">Начать играть</button>
 </div>
 <div class="card">
-<h2>📜 Правила</h2>
-<p>Обычная победа: +1 🪙</p>
-<p>Сложная победа: +3 🪙</p>
-<p>Друг: +20 🪙 после проверки сервером</p>
-<p>Максимум за игры: 30 🪙 в сутки.</p>
+<h2>📅 Ежедневные задания</h2>
+<p>🎯 Сыграть три партии: <b id="task1">0/3</b></p>
+<p>⭐ Набрать 100 очков за одну игру: <b id="task2">Не выполнено</b></p>
+<p class="small">Задания обновляются каждый день. Дополнительных монет за них пока нет.</p>
 </div>
 </section>
 
 <section id="games" class="page">
 <div class="card">
-<h2>🎯 Угадай число</h2>
-<p>Угадай число от 1 до 10. У тебя три попытки.</p>
-<input id="guess" type="number" min="1" max="10" placeholder="Введи число">
-<button class="full" onclick="guessNumber()">Проверить</button>
-<p id="guessmsg" class="muted"></p>
+<h2>🎮 Выбери игру</h2>
+<div class="gamepick">
+<button onclick="selectGame(0)">🚀 Space Battle</button>
+<button onclick="selectGame(1)">☄️ Asteroid Escape</button>
+<button onclick="selectGame(2)">🛡️ Tank Arena</button>
+<button onclick="selectGame(3)">👾 Alien Invasion</button>
+<button onclick="selectGame(4)">⚡ Laser Maze</button>
 </div>
-
+</div>
 <div class="card">
-<h2>⚡ Быстрая реакция</h2>
-<p>Нажми «Старт», дождись зелёного сигнала и нажми кнопку быстрее чем за 600 мс.</p>
-<button class="full" id="reaction" onclick="reactionClick()">Старт</button>
-<p id="reactionmsg" class="muted"></p>
+<h2 id="gameTitle">🚀 Space Battle</h2>
+<p id="gameInfo" class="small">Управляй кораблём и уничтожай врагов.</p>
+<canvas id="screen" width="320" height="420" class="gamecanvas"></canvas>
+<div class="stats" id="status">Нажми «Начать игру»</div>
+<div class="controls">
+<button id="left">◀</button>
+<button id="fire">🔥</button>
+<button id="right">▶</button>
 </div>
-
-<div class="card">
-<h2>🧠 Найди звезду</h2>
-<p>Запомни, где появится звезда. Затем выбери нужную клетку.</p>
-<div class="grid" id="tiles"></div>
-<button class="full btn2" onclick="startMemory()">Новая попытка</button>
-<p id="memorymsg" class="muted"></p>
+<button class="full" onclick="startGame()">▶ Начать игру</button>
+<button class="full secondary" onclick="stopGame()">■ Остановить</button>
+<p class="small">Управление: удерживай стрелки. В космических играх стрельба автоматическая, кнопка 🔥 ускоряет её. В лабиринте кнопки двигают игрока.</p>
 </div>
-</section>
-
-<section id="shop" class="page">
-<div class="card">
-<h2>🎁 Магазин призов</h2>
-<p class="muted">Примеры товаров. Настоящие призы позже добавишь через закрытую админку.</p>
-</div>
-<div id="prizes"></div>
 </section>
 
 <section id="friends" class="page">
 <div class="card">
-<h2>👥 Пригласи друга</h2>
-<p>За каждого проверенного нового игрока: <b>+20 🪙</b>.</p>
-<div class="stat">Лимит: 200 монет в день (10 друзей).</div>
-<button class="full" onclick="invite()">Поделиться ботом</button>
-<p class="note">Ссылка пока обычная, без персонального учёта. Бонусы за приглашения ещё не начисляются.</p>
+<h2>👥 Пригласи друзей</h2>
+<p>Планируемая награда: <b>20 монет</b> за подтверждённого нового игрока.</p>
+<div class="stats">Дневной лимит: 200 монет за приглашения.</div>
+<button class="full" onclick="shareBot()">Поделиться ботом</button>
+<p class="small">Пока ссылка не персональная и бонусы не начисляются. Для этого нужна проверка на сервере.</p>
+</div>
+</section>
+
+<section id="rating" class="page">
+<div class="card">
+<h2>🏆 Топ-10 игроков</h2>
+<p>Общий рейтинг появится после подключения серверной базы игроков.</p>
+<div class="stats">Твой локальный рекорд: <b id="mybest">0</b></div>
+<p class="small">Мы не показываем выдуманных игроков и результаты.</p>
 </div>
 </section>
 
 <section id="profile" class="page">
 <div class="card">
-<h2>👤 Мой профиль</h2>
-<div class="stat">Баланс: <b id="profilebalance">0</b> 🪙</div>
-<div class="stat">За игры сегодня: <b id="profileearned">0</b> 🪙</div>
-<p class="note">Данные демоверсии хранятся в браузере. Их можно изменить или потерять. Для реальных призов нужен защищённый сервер.</p>
+<h2>👤 Профиль</h2>
+<div class="stats">🪙 Баланс: <b id="profileCoins">0</b></div>
+<div class="stats">🎮 Сыграно партий сегодня: <b id="plays">0</b></div>
+<div class="stats">🏆 Рекорд: <b id="record">0</b></div>
+<p class="small">Это локальная демоверсия. Результаты можно изменить через браузер, поэтому они не подходят для настоящих наград.</p>
 </div>
 </section>
+
 </main>
 
 <nav>
-<button class="active" onclick="page('home',this)">🏠<br>Главная</button>
-<button onclick="page('games',this)">🎮<br>Игры</button>
-<button onclick="page('shop',this)">🎁<br>Призы</button>
-<button onclick="page('friends',this)">👥<br>Друзья</button>
-<button onclick="page('profile',this)">👤<br>Профиль</button>
+<button class="active" onclick="openPage('home')">🏠<br>Главная</button>
+<button onclick="openPage('games')">🎮<br>Игры</button>
+<button onclick="openPage('friends')">👥<br>Друзья</button>
+<button onclick="openPage('rating')">🏆<br>Топ</button>
+<button onclick="openPage('profile')">👤<br>Профиль</button>
 </nav>
 
 <script>
 const BOT="game_shop_rewards_bot";
-const KEY="game_shop_demo_v1";
-const today=()=>new Date().toLocaleDateString("en-CA");
-let state;
-try{
- state=JSON.parse(localStorage.getItem(KEY))||{};
-}catch(e){state={}}
-if(state.day!==today()){
- state={day:today(),balance:state.balance||0,earned:0,refearned:0};
+const KEY="gameshop2_demo";
+const date=()=>new Date().toLocaleDateString("en-CA");
+let data={};
+try{data=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){}
+if(data.day!==date()){
+ data={day:date(),coins:data.coins||0,daily:0,plays:0,best:data.best||0,task2:false};
 }
-state.balance=Number(state.balance)||0;
-state.earned=Number(state.earned)||0;
-state.refearned=Number(state.refearned)||0;
+data.coins=Number(data.coins)||0;
+data.daily=Number(data.daily)||0;
+data.plays=Number(data.plays)||0;
+data.best=Number(data.best)||0;
 
 function save(){
- localStorage.setItem(KEY,JSON.stringify(state));
- document.getElementById("balance").textContent=state.balance;
- document.getElementById("earned").textContent=state.earned;
- document.getElementById("refearned").textContent=state.refearned;
- document.getElementById("profilebalance").textContent=state.balance;
- document.getElementById("profileearned").textContent=state.earned;
+ localStorage.setItem(KEY,JSON.stringify(data));
+ document.getElementById("coins").textContent=data.coins;
+ document.getElementById("daily").textContent=data.daily;
+ document.getElementById("best").textContent=data.best;
+ document.getElementById("mybest").textContent=data.best;
+ document.getElementById("record").textContent=data.best;
+ document.getElementById("profileCoins").textContent=data.coins;
+ document.getElementById("plays").textContent=data.plays;
+ document.getElementById("task1").textContent=Math.min(data.plays,3)+"/3";
+ document.getElementById("task2").textContent=data.task2?"Выполнено":"Не выполнено";
 }
-function reward(amount){
- if(state.earned+amount>30){
-  alert("Дневной лимит игр: 30 монет.");
-  return;
- }
- state.balance+=amount;
- state.earned+=amount;
- save();
- alert("Победа! +"+amount+" 🪙");
-}
-function page(id,btn){
- document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+function openPage(id){
+ stopGame();
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
  document.getElementById(id).classList.add("active");
- document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
- btn.classList.add("active");
+ const names=["home","games","friends","rating","profile"];
+ document.querySelectorAll("nav button").forEach((b,i)=>b.classList.toggle("active",names[i]===id));
  window.scrollTo(0,0);
 }
-
-let secret=1,attempts=0;
-function newNumber(){
- secret=Math.floor(Math.random()*10)+1;
- attempts=0;
+function shareBot(){
+ const url="https://t.me/"+BOT;
+ if(navigator.share)navigator.share({title:"GAME SHOP",text:"Поиграй со мной!",url}).catch(()=>{});
+ else prompt("Скопируй ссылку:",url);
 }
-function guessNumber(){
- const n=Number(document.getElementById("guess").value);
- const msg=document.getElementById("guessmsg");
- if(!Number.isInteger(n)||n<1||n>10){
-  msg.textContent="Введи число от 1 до 10.";
+
+const canvas=document.getElementById("screen");
+const ctx=canvas.getContext("2d");
+const W=320,H=420;
+let mode=0,running=false,frame=0,score=0,hp=3;
+let player={x:160,y:365};
+let enemies=[],shots=[],walls=[],goal={x:290,y:35};
+let keys={left:false,right:false,fire:false};
+let raf=0,runId=0,lastTime=0;
+const titles=[
+ "🚀 Space Battle",
+ "☄️ Asteroid Escape",
+ "🛡️ Tank Arena",
+ "👾 Alien Invasion",
+ "⚡ Laser Maze"
+];
+const descriptions=[
+ "Уничтожай вражеские корабли и уклоняйся от них.",
+ "Переживи астероидный дождь. Скорость растёт.",
+ "Уничтожай танки противника и береги здоровье.",
+ "Отрази волны инопланетян.",
+ "Пройди лабиринт и доберись до зелёного выхода."
+];
+
+function selectGame(i){
+ stopGame();
+ mode=i;
+ document.getElementById("gameTitle").textContent=titles[i];
+ document.getElementById("gameInfo").textContent=descriptions[i];
+ drawIdle();
+}
+function drawIdle(){
+ ctx.fillStyle="#080d25";
+ ctx.fillRect(0,0,W,H);
+ ctx.fillStyle="#00f5ff";
+ ctx.textAlign="center";
+ ctx.font="bold 20px Arial";
+ ctx.fillText(titles[mode],160,190);
+ ctx.font="14px Arial";
+ ctx.fillStyle="#b3bddc";
+ ctx.fillText("Нажми «Начать игру»",160,220);
+}
+function startGame(){
+ stopGame();
+ running=true;
+ runId++;
+ frame=0;score=0;hp=3;
+ player={x:160,y:365};
+ enemies=[];shots=[];
+ keys={left:false,right:false,fire:false};
+ data.plays++;
+ save();
+ if(mode===4)makeMaze();
+ document.getElementById("status").textContent="Очки: 0 | Жизни: 3";
+ lastTime=performance.now();
+ const id=runId;
+ raf=requestAnimationFrame(t=>loop(t,id));
+}
+function stopGame(){
+ running=false;
+ runId++;
+ cancelAnimationFrame(raf);
+ keys={left:false,right:false,fire:false};
+}
+function endGame(win){
+ if(!running)return;
+ running=false;
+ cancelAnimationFrame(raf);
+ data.best=Math.max(data.best,score);
+ if(score>=100)data.task2=true;
+ let reward=0;
+ if(win&&score>=100)reward=3;
+ else if(score>=50)reward=1;
+ reward=Math.min(reward,Math.max(0,30-data.daily));
+ data.coins+=reward;
+ data.daily+=reward;
+ save();
+ document.getElementById("status").textContent=
+ (win?"Победа! ":"Игра окончена. ")+
+ "Очки: "+score+" | +"+reward+" 🪙";
+}
+function loop(time,id){
+ if(!running||id!==runId)return;
+ if(time-lastTime<16){
+  raf=requestAnimationFrame(t=>loop(t,id));
   return;
  }
- attempts++;
- if(n===secret){
-  msg.textContent="Правильно! Новое число загадано.";
-  reward(1);
-  newNumber();
- }else if(attempts>=3){
-  msg.textContent="Попытки закончились. Было число "+secret+".";
-  newNumber();
- }else{
-  msg.textContent=n<secret?"Загаданное число больше.":"Загаданное число меньше.";
+ lastTime=time;
+ frame++;
+ update();
+ draw();
+ document.getElementById("status").textContent="Очки: "+score+" | Жизни: "+hp;
+ if(running)raf=requestAnimationFrame(t=>loop(t,id));
+}
+function update(){
+ if(mode===4){
+  updateMaze();
+  return;
  }
- document.getElementById("guess").value="";
-}
-newNumber();
-
-let reactionStatus="idle",reactionTimer=null,reactionStart=0;
-function reactionClick(){
- const btn=document.getElementById("reaction");
- const msg=document.getElementById("reactionmsg");
- if(reactionStatus==="idle"){
-  reactionStatus="waiting";
-  btn.textContent="Жди сигнала...";
-  btn.style.background="#f6bd60";
-  msg.textContent="Не нажимай раньше времени!";
-  reactionTimer=setTimeout(()=>{
-   reactionStatus="ready";
-   reactionStart=performance.now();
-   btn.textContent="НАЖМИ!";
-   btn.style.background="#80f7c2";
-  },1500+Math.random()*2500);
- }else if(reactionStatus==="waiting"){
-  clearTimeout(reactionTimer);
-  msg.textContent="Слишком рано! Попробуй ещё.";
-  resetReaction();
- }else{
-  const ms=Math.round(performance.now()-reactionStart);
-  msg.textContent="Твоя реакция: "+ms+" мс.";
-  if(ms<=600)reward(1);
-  else msg.textContent+=" Нужно быстрее 600 мс.";
-  resetReaction();
+ if(keys.left)player.x-=4;
+ if(keys.right)player.x+=4;
+ player.x=Math.max(15,Math.min(305,player.x));
+ const rate=mode===3?11:mode===2?15:9;
+ if(mode!==1&&frame%rate===0){
+  shots.push({x:player.x,y:player.y-15});
  }
-}
-function resetReaction(){
- reactionStatus="idle";
- const btn=document.getElementById("reaction");
- btn.textContent="Старт";
- btn.style.background="";
-}
-
-let memoryTarget=-1,memoryActive=false,memoryTimeout=null;
-function drawTiles(){
- const root=document.getElementById("tiles");
- root.innerHTML="";
- for(let i=0;i<9;i++){
-  const b=document.createElement("button");
-  b.className="tile";
-  b.textContent="❔";
-  b.onclick=()=>chooseTile(i);
-  root.appendChild(b);
+ if(mode!==1&&keys.fire&&frame%5===0){
+  shots.push({x:player.x,y:player.y-15});
  }
+ shots.forEach(s=>s.y-=7);
+ shots=shots.filter(s=>s.y>-10);
+ const spawn=mode===1?14:mode===3?29:mode===2?36:24;
+ if(frame%Math.max(9,spawn-Math.floor(frame/350))===0){
+  enemies.push({
+   x:20+Math.random()*280,
+   y:-20,
+   r:mode===1?10+Math.random()*10:14,
+   hp:mode===2?2:1,
+   speed:1.8+Math.min(3,frame/500)
+  });
+ }
+ enemies.forEach(e=>e.y+=e.speed);
+ for(let i=enemies.length-1;i>=0;i--){
+  const e=enemies[i];
+  if(Math.abs(e.x-player.x)<e.r+12&&Math.abs(e.y-player.y)<e.r+12){
+   enemies.splice(i,1);
+   hp--;
+   if(hp<=0){endGame(false);return}
+   continue;
+  }
+  if(e.y>H+25){
+   enemies.splice(i,1);
+   if(mode!==1){
+    hp--;
+    if(hp<=0){endGame(false);return}
+   }else score+=1;
+   continue;
+  }
+  if(mode!==1){
+   for(let j=shots.length-1;j>=0;j--){
+    const s=shots[j];
+    if(Math.hypot(e.x-s.x,e.y-s.y)<e.r+5){
+     shots.splice(j,1);
+     e.hp--;
+     if(e.hp<=0){
+      enemies.splice(i,1);
+      score+=10;
+     }
+     break;
+    }
+   }
+  }
+ }
+ if(mode===1&&frame%60===0)score+=2;
+ if(frame>=1800)endGame(score>=100);
 }
-function startMemory(){
- clearTimeout(memoryTimeout);
- drawTiles();
- memoryActive=false;
- memoryTarget=Math.floor(Math.random()*9);
- const tiles=document.querySelectorAll(".tile");
- tiles[memoryTarget].textContent="⭐";
- document.getElementById("memorymsg").textContent="Запоминай!";
- memoryTimeout=setTimeout(()=>{
-  tiles[memoryTarget].textContent="❔";
-  memoryActive=true;
-  document.getElementById("memorymsg").textContent="Где была звезда?";
- },1200);
-}
-function chooseTile(i){
- if(!memoryActive)return;
- memoryActive=false;
- const correct=i===memoryTarget;
- const tiles=document.querySelectorAll(".tile");
- tiles[memoryTarget].textContent="⭐";
- document.getElementById("memorymsg").textContent=correct?
- "Правильно!":"Неверно. Попробуй снова.";
- if(correct)reward(3);
-}
-drawTiles();
-
-const prizes=[
- {name:"Беспроводные наушники",price:3000,stock:2,icon:"🎧"},
- {name:"Портативная колонка",price:5000,stock:0,icon:"🔊"},
- {name:"Чехол для телефона",price:1500,stock:5,icon:"📱"}
-];
-function renderPrizes(){
- const root=document.getElementById("prizes");
- root.innerHTML="";
- prizes.forEach(p=>{
-  const card=document.createElement("div");
-  card.className="card";
-  const row=document.createElement("div");
-  row.className="prize";
-  const icon=document.createElement("div");
-  icon.className="emoji";
-  icon.textContent=p.icon;
-  const info=document.createElement("div");
-  const title=document.createElement("h2");
-  title.textContent=p.name;
-  const price=document.createElement("p");
-  price.textContent="🪙 "+p.price+" монет";
-  const stock=document.createElement("small");
-  stock.textContent=p.stock>0?"В наличии: "+p.stock:"Нет в наличии";
-  info.append(title,price,stock);
-  row.append(icon,info);
-  const btn=document.createElement("button");
-  btn.className="full";
-  btn.textContent=p.stock>0?"Посмотреть приз":"Нет в наличии";
-  btn.disabled=p.stock===0;
-  btn.onclick=()=>alert("Демоверсия: оформление заказов пока отключено. Монеты не списаны.");
-  card.append(row,btn);
-  root.appendChild(card);
+function draw(){
+ ctx.fillStyle="#080d25";
+ ctx.fillRect(0,0,W,H);
+ for(let i=0;i<35;i++){
+  let x=(i*83)%320,y=(i*127+frame)%420;
+  ctx.fillStyle="#33476c";
+  ctx.fillRect(x,y,2,2);
+ }
+ if(mode===4){drawMaze();return}
+ ctx.textAlign="center";
+ ctx.font="25px Arial";
+ ctx.fillText(mode===2?"🛡️":"🚀",player.x,player.y+8);
+ enemies.forEach(e=>{
+  ctx.beginPath();
+  ctx.fillStyle=mode===1?"#ff9a45":mode===3?"#bb6cff":"#ff4f91";
+  ctx.arc(e.x,e.y,e.r,0,Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle="#fff";
+  ctx.font="15px Arial";
+  ctx.fillText(mode===1?"☄":mode===2?"✖":"👾",e.x,e.y+5);
  });
+ ctx.fillStyle="#00f5ff";
+ shots.forEach(s=>ctx.fillRect(s.x-2,s.y-9,4,13));
+ ctx.fillStyle="white";
+ ctx.font="14px Arial";
+ ctx.textAlign="left";
+ ctx.fillText("❤️ "+hp+"    ⭐ "+score,10,22);
 }
-renderPrizes();
 
-function invite(){
- const link="https://t.me/"+BOT;
- if(navigator.share){
-  navigator.share({title:"GAME SHOP",text:"Заходи играть в GAME SHOP!",url:link}).catch(()=>{});
- }else if(navigator.clipboard){
-  navigator.clipboard.writeText(link).then(()=>alert("Ссылка скопирована."));
- }else{
-  prompt("Скопируй ссылку:",link);
+const CELL=40;
+let maze=[],mx=0,my=0;
+function makeMaze(){
+ maze=[
+ "########",
+ "#......#",
+ "#.####.#",
+ "#.#....#",
+ "#.#.##.#",
+ "#...#..#",
+ "###.#.##",
+ "#...#..#",
+ "#.###..#",
+ "#......#"
+ ];
+ mx=1;my=9;
+ goal={x:6,y:1};
+ player.x=mx*CELL+20;
+ player.y=my*CELL+20;
+}
+function updateMaze(){
+ if(frame%60===0)score+=1;
+ if(frame>2400)endGame(false);
+}
+function moveMaze(dx,dy){
+ if(!running||mode!==4)return;
+ const nx=mx+dx,ny=my+dy;
+ if(ny<0||ny>=maze.length||nx<0||nx>=8)return;
+ if(maze[ny][nx]==="#")return;
+ mx=nx;my=ny;
+ player.x=mx*CELL+20;
+ player.y=my*CELL+20;
+ score+=5;
+ if(mx===goal.x&&my===goal.y){
+  score+=100;
+  draw();
+  endGame(true);
  }
 }
+function drawMaze(){
+ for(let y=0;y<maze.length;y++){
+  for(let x=0;x<8;x++){
+   ctx.fillStyle=maze[y][x]==="#"?"#263d80":"#101936";
+   ctx.fillRect(x*CELL+1,y*CELL+1,CELL-2,CELL-2);
+  }
+ }
+ ctx.fillStyle="#00f5a0";
+ ctx.fillRect(goal.x*CELL+8,goal.y*CELL+8,24,24);
+ ctx.fillStyle="#ffdd55";
+ ctx.beginPath();
+ ctx.arc(player.x,player.y,12,0,Math.PI*2);
+ ctx.fill();
+}
+
+function bindButton(id,key){
+ const b=document.getElementById(id);
+ b.addEventListener("pointerdown",e=>{
+  e.preventDefault();
+  if(mode===4){
+   if(key==="left")moveMaze(-1,0);
+   if(key==="right")moveMaze(1,0);
+   if(key==="fire")moveMaze(0,-1);
+  }else keys[key]=true;
+ });
+ for(const ev of ["pointerup","pointercancel","pointerleave"]){
+  b.addEventListener(ev,()=>keys[key]=false);
+ }
+}
+bindButton("left","left");
+bindButton("right","right");
+bindButton("fire","fire");
+
+canvas.addEventListener("pointerdown",e=>{
+ if(!running)return;
+ const rect=canvas.getBoundingClientRect();
+ const x=(e.clientX-rect.left)*W/rect.width;
+ if(mode===4){
+  moveMaze(0,1);
+ }else{
+  player.x=Math.max(15,Math.min(305,x));
+ }
+});
+drawIdle();
 save();
 </script>
 </body>
 </html>
+
