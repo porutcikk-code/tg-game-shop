@@ -1,0 +1,317 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1020">
+<title>GAME SHOP</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b1020;color:#fff;font-family:Arial,sans-serif}
+header{text-align:center;padding:25px 15px;background:#141d35}
+h1{margin:0;color:#80f7c2;font-size:30px}
+small,.muted{color:#aab5cf}
+.balance{font-size:25px;font-weight:bold;margin-top:15px;color:#ffd76a}
+main{max-width:540px;margin:auto;padding:15px 15px 100px}
+.card{background:#17213a;border:1px solid #293655;border-radius:17px;padding:18px;margin-bottom:15px}
+h2{font-size:20px;margin:0 0 12px}
+p{line-height:1.5}
+button{border:0;border-radius:12px;padding:13px 16px;background:#80f7c2;color:#08131a;font-weight:bold;font-size:15px;cursor:pointer}
+button:disabled{opacity:.4}
+.btn2{background:#293b60;color:white}
+.full{width:100%;margin-top:10px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#111a30;display:flex;justify-content:space-around;padding:10px 4px 20px;border-top:1px solid #34415d}
+nav button{background:transparent;color:#c2cee5;font-size:12px;padding:8px}
+nav button.active{color:#80f7c2}
+.page{display:none}
+.page.active{display:block}
+.stat{background:#0e172b;border-radius:10px;padding:12px;margin:10px 0}
+input{width:100%;padding:13px;border-radius:10px;border:1px solid #425276;background:#0c1528;color:white;font-size:16px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.tile{height:82px;font-size:32px;background:#26395e;color:white}
+.tile.hit{background:#80f7c2;color:#07121b}
+.prize{display:flex;gap:12px;align-items:center}
+.emoji{font-size:45px}
+hr{border:0;border-top:1px solid #33415d;margin:15px 0}
+.note{font-size:12px;color:#aab5cf}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🎮 GAME SHOP</h1>
+<p class="muted">Играй • Копи монеты • Получай призы</p>
+<div class="balance">🪙 <span id="balance">0</span></div>
+<small>Демонстрационный баланс</small>
+</header>
+
+<main>
+<section id="home" class="page active">
+<div class="card">
+<h2>👋 Добро пожаловать!</h2>
+<p>Проходи мини-игры, приглашай друзей и копи монеты для обмена на призы.</p>
+<div class="stat">🎮 Заработано за игры сегодня: <b id="earned">0</b> / 30</div>
+<div class="stat">👥 Бонусы за друзей сегодня: <b id="refearned">0</b> / 200</div>
+<p class="note">Это тестовая версия. Реальные награды пока не оформляются.</p>
+</div>
+<div class="card">
+<h2>📜 Правила</h2>
+<p>Обычная победа: +1 🪙</p>
+<p>Сложная победа: +3 🪙</p>
+<p>Друг: +20 🪙 после проверки сервером</p>
+<p>Максимум за игры: 30 🪙 в сутки.</p>
+</div>
+</section>
+
+<section id="games" class="page">
+<div class="card">
+<h2>🎯 Угадай число</h2>
+<p>Угадай число от 1 до 10. У тебя три попытки.</p>
+<input id="guess" type="number" min="1" max="10" placeholder="Введи число">
+<button class="full" onclick="guessNumber()">Проверить</button>
+<p id="guessmsg" class="muted"></p>
+</div>
+
+<div class="card">
+<h2>⚡ Быстрая реакция</h2>
+<p>Нажми «Старт», дождись зелёного сигнала и нажми кнопку быстрее чем за 600 мс.</p>
+<button class="full" id="reaction" onclick="reactionClick()">Старт</button>
+<p id="reactionmsg" class="muted"></p>
+</div>
+
+<div class="card">
+<h2>🧠 Найди звезду</h2>
+<p>Запомни, где появится звезда. Затем выбери нужную клетку.</p>
+<div class="grid" id="tiles"></div>
+<button class="full btn2" onclick="startMemory()">Новая попытка</button>
+<p id="memorymsg" class="muted"></p>
+</div>
+</section>
+
+<section id="shop" class="page">
+<div class="card">
+<h2>🎁 Магазин призов</h2>
+<p class="muted">Примеры товаров. Настоящие призы позже добавишь через закрытую админку.</p>
+</div>
+<div id="prizes"></div>
+</section>
+
+<section id="friends" class="page">
+<div class="card">
+<h2>👥 Пригласи друга</h2>
+<p>За каждого проверенного нового игрока: <b>+20 🪙</b>.</p>
+<div class="stat">Лимит: 200 монет в день (10 друзей).</div>
+<button class="full" onclick="invite()">Поделиться ботом</button>
+<p class="note">Ссылка пока обычная, без персонального учёта. Бонусы за приглашения ещё не начисляются.</p>
+</div>
+</section>
+
+<section id="profile" class="page">
+<div class="card">
+<h2>👤 Мой профиль</h2>
+<div class="stat">Баланс: <b id="profilebalance">0</b> 🪙</div>
+<div class="stat">За игры сегодня: <b id="profileearned">0</b> 🪙</div>
+<p class="note">Данные демоверсии хранятся в браузере. Их можно изменить или потерять. Для реальных призов нужен защищённый сервер.</p>
+</div>
+</section>
+</main>
+
+<nav>
+<button class="active" onclick="page('home',this)">🏠<br>Главная</button>
+<button onclick="page('games',this)">🎮<br>Игры</button>
+<button onclick="page('shop',this)">🎁<br>Призы</button>
+<button onclick="page('friends',this)">👥<br>Друзья</button>
+<button onclick="page('profile',this)">👤<br>Профиль</button>
+</nav>
+
+<script>
+const BOT="game_shop_rewards_bot";
+const KEY="game_shop_demo_v1";
+const today=()=>new Date().toLocaleDateString("en-CA");
+let state;
+try{
+ state=JSON.parse(localStorage.getItem(KEY))||{};
+}catch(e){state={}}
+if(state.day!==today()){
+ state={day:today(),balance:state.balance||0,earned:0,refearned:0};
+}
+state.balance=Number(state.balance)||0;
+state.earned=Number(state.earned)||0;
+state.refearned=Number(state.refearned)||0;
+
+function save(){
+ localStorage.setItem(KEY,JSON.stringify(state));
+ document.getElementById("balance").textContent=state.balance;
+ document.getElementById("earned").textContent=state.earned;
+ document.getElementById("refearned").textContent=state.refearned;
+ document.getElementById("profilebalance").textContent=state.balance;
+ document.getElementById("profileearned").textContent=state.earned;
+}
+function reward(amount){
+ if(state.earned+amount>30){
+  alert("Дневной лимит игр: 30 монет.");
+  return;
+ }
+ state.balance+=amount;
+ state.earned+=amount;
+ save();
+ alert("Победа! +"+amount+" 🪙");
+}
+function page(id,btn){
+ document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+ btn.classList.add("active");
+ window.scrollTo(0,0);
+}
+
+let secret=1,attempts=0;
+function newNumber(){
+ secret=Math.floor(Math.random()*10)+1;
+ attempts=0;
+}
+function guessNumber(){
+ const n=Number(document.getElementById("guess").value);
+ const msg=document.getElementById("guessmsg");
+ if(!Number.isInteger(n)||n<1||n>10){
+  msg.textContent="Введи число от 1 до 10.";
+  return;
+ }
+ attempts++;
+ if(n===secret){
+  msg.textContent="Правильно! Новое число загадано.";
+  reward(1);
+  newNumber();
+ }else if(attempts>=3){
+  msg.textContent="Попытки закончились. Было число "+secret+".";
+  newNumber();
+ }else{
+  msg.textContent=n<secret?"Загаданное число больше.":"Загаданное число меньше.";
+ }
+ document.getElementById("guess").value="";
+}
+newNumber();
+
+let reactionStatus="idle",reactionTimer=null,reactionStart=0;
+function reactionClick(){
+ const btn=document.getElementById("reaction");
+ const msg=document.getElementById("reactionmsg");
+ if(reactionStatus==="idle"){
+  reactionStatus="waiting";
+  btn.textContent="Жди сигнала...";
+  btn.style.background="#f6bd60";
+  msg.textContent="Не нажимай раньше времени!";
+  reactionTimer=setTimeout(()=>{
+   reactionStatus="ready";
+   reactionStart=performance.now();
+   btn.textContent="НАЖМИ!";
+   btn.style.background="#80f7c2";
+  },1500+Math.random()*2500);
+ }else if(reactionStatus==="waiting"){
+  clearTimeout(reactionTimer);
+  msg.textContent="Слишком рано! Попробуй ещё.";
+  resetReaction();
+ }else{
+  const ms=Math.round(performance.now()-reactionStart);
+  msg.textContent="Твоя реакция: "+ms+" мс.";
+  if(ms<=600)reward(1);
+  else msg.textContent+=" Нужно быстрее 600 мс.";
+  resetReaction();
+ }
+}
+function resetReaction(){
+ reactionStatus="idle";
+ const btn=document.getElementById("reaction");
+ btn.textContent="Старт";
+ btn.style.background="";
+}
+
+let memoryTarget=-1,memoryActive=false,memoryTimeout=null;
+function drawTiles(){
+ const root=document.getElementById("tiles");
+ root.innerHTML="";
+ for(let i=0;i<9;i++){
+  const b=document.createElement("button");
+  b.className="tile";
+  b.textContent="❔";
+  b.onclick=()=>chooseTile(i);
+  root.appendChild(b);
+ }
+}
+function startMemory(){
+ clearTimeout(memoryTimeout);
+ drawTiles();
+ memoryActive=false;
+ memoryTarget=Math.floor(Math.random()*9);
+ const tiles=document.querySelectorAll(".tile");
+ tiles[memoryTarget].textContent="⭐";
+ document.getElementById("memorymsg").textContent="Запоминай!";
+ memoryTimeout=setTimeout(()=>{
+  tiles[memoryTarget].textContent="❔";
+  memoryActive=true;
+  document.getElementById("memorymsg").textContent="Где была звезда?";
+ },1200);
+}
+function chooseTile(i){
+ if(!memoryActive)return;
+ memoryActive=false;
+ const correct=i===memoryTarget;
+ const tiles=document.querySelectorAll(".tile");
+ tiles[memoryTarget].textContent="⭐";
+ document.getElementById("memorymsg").textContent=correct?
+ "Правильно!":"Неверно. Попробуй снова.";
+ if(correct)reward(3);
+}
+drawTiles();
+
+const prizes=[
+ {name:"Беспроводные наушники",price:3000,stock:2,icon:"🎧"},
+ {name:"Портативная колонка",price:5000,stock:0,icon:"🔊"},
+ {name:"Чехол для телефона",price:1500,stock:5,icon:"📱"}
+];
+function renderPrizes(){
+ const root=document.getElementById("prizes");
+ root.innerHTML="";
+ prizes.forEach(p=>{
+  const card=document.createElement("div");
+  card.className="card";
+  const row=document.createElement("div");
+  row.className="prize";
+  const icon=document.createElement("div");
+  icon.className="emoji";
+  icon.textContent=p.icon;
+  const info=document.createElement("div");
+  const title=document.createElement("h2");
+  title.textContent=p.name;
+  const price=document.createElement("p");
+  price.textContent="🪙 "+p.price+" монет";
+  const stock=document.createElement("small");
+  stock.textContent=p.stock>0?"В наличии: "+p.stock:"Нет в наличии";
+  info.append(title,price,stock);
+  row.append(icon,info);
+  const btn=document.createElement("button");
+  btn.className="full";
+  btn.textContent=p.stock>0?"Посмотреть приз":"Нет в наличии";
+  btn.disabled=p.stock===0;
+  btn.onclick=()=>alert("Демоверсия: оформление заказов пока отключено. Монеты не списаны.");
+  card.append(row,btn);
+  root.appendChild(card);
+ });
+}
+renderPrizes();
+
+function invite(){
+ const link="https://t.me/"+BOT;
+ if(navigator.share){
+  navigator.share({title:"GAME SHOP",text:"Заходи играть в GAME SHOP!",url:link}).catch(()=>{});
+ }else if(navigator.clipboard){
+  navigator.clipboard.writeText(link).then(()=>alert("Ссылка скопирована."));
+ }else{
+  prompt("Скопируй ссылку:",link);
+ }
+}
+save();
+</script>
+</body>
+</html>
