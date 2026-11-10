@@ -3,441 +3,316 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-<title>GAME SHOP 2.0</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#070915">
+<title>GAME SHOP — CYBER ARENA</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#08091a;color:white;font-family:Arial,sans-serif}
-header{text-align:center;padding:19px;background:linear-gradient(135deg,#211044,#101c42)}
-h1{margin:0;color:#00f5ff;text-shadow:0 0 15px #00f5ff;font-size:29px}
-.sub{color:#a9b3d5;font-size:12px}
-.balance{font-size:26px;color:#ffe16a;font-weight:bold;margin-top:12px}
-main{max-width:520px;margin:auto;padding:14px 14px 100px}
-.card{background:#151936;border:1px solid #393e73;border-radius:17px;padding:15px;margin-bottom:14px}
+:root{--bg:#070915;--panel:#12172c;--cyan:#00eaff;--pink:#ff3ca6;--gold:#ffcc55;--muted:#929dbd}
+body{margin:0;background:var(--bg);color:white;font:15px system-ui,-apple-system,sans-serif;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent 98%,#00eaff09 99%),linear-gradient(transparent 98%,#00eaff09 99%);background-size:32px 32px}
+header{padding:22px 18px 15px;background:linear-gradient(135deg,#111832,#230e39);border-bottom:1px solid #293758}
+.logo{font-size:29px;font-weight:1000;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 24px #00eaff88}
+.sub{color:var(--muted);font-size:11px;letter-spacing:2px;margin-top:5px}
+.stats{display:flex;gap:9px;margin-top:20px}
+.stat{flex:1;background:#080d20bb;border:1px solid #354366;border-radius:13px;padding:12px 8px;text-align:center}
+.stat b{display:block;font-size:20px;color:var(--gold)}
+.stat small{color:var(--muted);font-size:10px}
+main{padding:16px 14px 100px;max-width:650px;margin:auto}
+section{display:none}
+section.active{display:block}
+.card{background:linear-gradient(145deg,#161d37,#101428);border:1px solid #303c62;border-radius:19px;padding:19px;margin-bottom:14px;box-shadow:0 12px 30px #0003}
 h2{font-size:20px;margin:0 0 12px}
-p{line-height:1.45}
-button{border:0;border-radius:11px;background:#00dce8;color:#07101d;font-size:15px;font-weight:bold;padding:12px;cursor:pointer}
-button:disabled{opacity:.4}
-.secondary{background:#30395d;color:white}
-.full{width:100%;margin-top:9px}
-.page{display:none}
-.page.active{display:block}
-nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;background:#10132c;border-top:1px solid #41457c;padding:9px 2px 20px;z-index:10}
-nav button{background:none;color:#b3bddc;padding:7px 3px;font-size:11px}
-nav button.active{color:#00f5ff}
-.gamecanvas{width:100%;height:auto;display:block;background:#070d23;border:1px solid #454d86;border-radius:12px;touch-action:none}
-.stats{background:#0c1128;border-radius:10px;padding:12px;margin:10px 0}
-.controls{display:flex;gap:9px;margin-top:10px}
-.controls button{flex:1;touch-action:none}
-.small{font-size:12px;color:#a9b3d5}
-.pill{display:inline-block;padding:5px 9px;border-radius:30px;background:#293258;color:#9efaff;font-size:12px}
-.gamebox{display:none}
-.gamebox.active{display:block}
-.gamepick{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.gamepick button{min-height:70px;background:#252d58;color:#fff}
+p{line-height:1.55;color:#b7c1dd}
+.hero{padding:25px 20px;background:radial-gradient(circle at 85% 0%,#542057 0%,transparent 60%),linear-gradient(135deg,#132542,#111329);border:1px solid #6c3b87}
+.hero h1{font-size:32px;line-height:1.06;margin:12px 0;color:white}
+.hero h1 span{color:var(--cyan)}
+button{font:inherit;cursor:pointer;border:0}
+.btn{background:linear-gradient(100deg,var(--cyan),#5d91ff);color:#031022;font-weight:900;padding:14px 16px;border-radius:12px;width:100%;margin-top:9px}
+.btn.alt{background:#222b4e;color:white;border:1px solid #43517a}
+.pill{display:inline-block;color:var(--cyan);font-size:11px;font-weight:900;letter-spacing:2px;border:1px solid #246d85;border-radius:20px;padding:6px 10px}
+.game-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.game-tile{min-height:135px;padding:16px 12px;text-align:left;border-radius:16px;background:linear-gradient(145deg,#242a50,#151a31);color:white;border:1px solid #394772}
+.game-tile .emoji{font-size:32px;display:block;margin-bottom:12px}
+.game-tile strong{display:block;font-size:15px}
+.game-tile small{display:block;color:#a6b5d9;margin-top:6px;font-size:11px}
+.game-tile.selected{border-color:var(--cyan);box-shadow:0 0 20px #00eaff22}
+#arena{width:100%;display:block;aspect-ratio:3/4;background:#05091a;border:1px solid #46618b;border-radius:13px;touch-action:none}
+.gamehud{display:flex;justify-content:space-between;gap:5px;margin:10px 0;font-weight:800;font-size:12px}
+.gamehud span{color:var(--cyan)}
+.controls{display:flex;gap:10px;margin-top:12px;align-items:center}
+.ctrl{flex:1;height:62px;border:1px solid #53648d;border-radius:14px;background:#25345b;color:white;font-size:25px;touch-action:none;user-select:none}
+.ctrl.fire{background:linear-gradient(135deg,#fc368e,#a52981);font-size:15px;font-weight:900}
+.note{font-size:12px;color:var(--muted);margin-top:10px}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;z-index:20;background:#0e1429f5;border-top:1px solid #364168;padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;color:#91a0c1;padding:12px 1px 10px;font-size:10px;font-weight:700}
+nav button span{display:block;font-size:21px;margin-bottom:3px}
+nav button.on{color:var(--cyan)}
+.row{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #303957}
+.row:last-child{border-bottom:0}
+.rank{color:var(--gold);font-weight:900}
+.muted{color:var(--muted)}
+#toast{position:fixed;bottom:95px;left:8%;width:84%;padding:12px;border-radius:12px;background:#25355a;border:1px solid var(--cyan);text-align:center;display:none;z-index:30}
 </style>
 </head>
 <body>
-
 <header>
-<h1>⚡ GAME SHOP 2.0</h1>
-<div class="sub">NEON ARCADE • ПЯТЬ ИГР</div>
-<div class="balance">🪙 <span id="coins">0</span></div>
-<div class="sub">Тестовые игровые монеты</div>
+<div class="logo">⚡ GAME SHOP</div>
+<div class="sub">CYBER ARENA // SEASON 01</div>
+<div class="stats">
+<div class="stat"><b id="coins">0</b><small>🪙 МОНЕТЫ</small></div>
+<div class="stat"><b id="best">0</b><small>🏆 РЕКОРД</small></div>
+<div class="stat"><b id="played">0</b><small>🎮 ИГРЫ</small></div>
+</div>
 </header>
-
 <main>
-
-<section id="home" class="page active">
-<div class="card">
-<h2>🚀 Игровая арена</h2>
-<p>Пять игр. Проходи сложные испытания, улучшай рекорды и собирай виртуальные монеты.</p>
-<div class="stats">🎮 За игры сегодня: <b id="daily">0</b> / 30</div>
-<div class="stats">🏆 Лучший результат: <b id="best">0</b></div>
-<button class="full" onclick="openPage('games')">Начать играть</button>
+<section id="home" class="active">
+<div class="card hero">
+<span class="pill">● ONLINE ARCADE</span>
+<h1>ТВОЯ <span>АРЕНА.</span><br>ТВОИ ПРАВИЛА.</h1>
+<p>Пять испытаний. Разные механики. Чем дольше держишься, тем выше результат.</p>
+<button class="btn" onclick="page('games')">🚀 ВОЙТИ В АРЕНУ</button>
 </div>
 <div class="card">
-<h2>📅 Ежедневные задания</h2>
-<p>🎯 Сыграть три партии: <b id="task1">0/3</b></p>
-<p>⭐ Набрать 100 очков за одну игру: <b id="task2">Не выполнено</b></p>
-<p class="small">Задания обновляются каждый день. Дополнительных монет за них пока нет.</p>
+<h2>🔥 Ежедневная миссия</h2>
+<p id="daily">Сыграй 3 партии и набери 150 очков в одной из них.</p>
+<div class="note">Прогресс и монеты в этой версии хранятся только на твоём устройстве.</div>
+</div>
+<div class="card">
+<h2>🎮 Режимы арены</h2>
+<p>🚀 Космическая битва · 🛡️ Танки · ☄️ Астероиды · ⚡ Лабиринт · 👾 Оборона базы</p>
 </div>
 </section>
-
-<section id="games" class="page">
+<section id="games">
 <div class="card">
-<h2>🎮 Выбери игру</h2>
-<div class="gamepick">
-<button onclick="selectGame(0)">🚀 Space Battle</button>
-<button onclick="selectGame(1)">☄️ Asteroid Escape</button>
-<button onclick="selectGame(2)">🛡️ Tank Arena</button>
-<button onclick="selectGame(3)">👾 Alien Invasion</button>
-<button onclick="selectGame(4)">⚡ Laser Maze</button>
-</div>
+<h2>🎮 Выбери режим</h2>
+<div class="game-grid" id="gameGrid"></div>
 </div>
 <div class="card">
-<h2 id="gameTitle">🚀 Space Battle</h2>
-<p id="gameInfo" class="small">Управляй кораблём и уничтожай врагов.</p>
-<canvas id="screen" width="320" height="420" class="gamecanvas"></canvas>
-<div class="stats" id="status">Нажми «Начать игру»</div>
+<h2 id="gameTitle">🚀 Космическая битва</h2>
+<p id="gameDesc">Двигай корабль и сбивай врагов.</p>
+<div class="gamehud"><div>СЧЁТ: <span id="score">0</span></div><div>ЖИЗНИ: <span id="hp">3</span></div><div>УРОВЕНЬ: <span id="level">1</span></div></div>
+<canvas id="arena" width="360" height="480"></canvas>
 <div class="controls">
-<button id="left">◀</button>
-<button id="fire">🔥</button>
-<button id="right">▶</button>
+<button class="ctrl" id="left">◀</button>
+<button class="ctrl fire" id="fire">● ОГОНЬ</button>
+<button class="ctrl" id="right">▶</button>
 </div>
-<button class="full" onclick="startGame()">▶ Начать игру</button>
-<button class="full secondary" onclick="stopGame()">■ Остановить</button>
-<p class="small">Управление: удерживай стрелки. В космических играх стрельба автоматическая, кнопка 🔥 ускоряет её. В лабиринте кнопки двигают игрока.</p>
+<div class="note" id="instructions">Удерживай стрелки и кнопку огня. Можно также двигать пальцем по игровому полю.</div>
+<button class="btn" id="startBtn" onclick="startGame()">▶ НАЧАТЬ ИГРУ</button>
+<button class="btn alt" onclick="stopGame()">■ ЗАКОНЧИТЬ</button>
 </div>
 </section>
-
-<section id="friends" class="page">
+<section id="friends">
 <div class="card">
 <h2>👥 Пригласи друзей</h2>
-<p>Планируемая награда: <b>20 монет</b> за подтверждённого нового игрока.</p>
-<div class="stats">Дневной лимит: 200 монет за приглашения.</div>
-<button class="full" onclick="shareBot()">Поделиться ботом</button>
-<p class="small">Пока ссылка не персональная и бонусы не начисляются. Для этого нужна проверка на сервере.</p>
+<p>Играй вместе с друзьями и сравнивай рекорды. Автоматические бонусы за приглашения появятся после подключения защищённого сервера.</p>
+<button class="btn" onclick="invite()">🔗 ПОДЕЛИТЬСЯ БОТОМ</button>
 </div>
 </section>
-
-<section id="rating" class="page">
+<section id="top">
 <div class="card">
-<h2>🏆 Топ-10 игроков</h2>
-<p>Общий рейтинг появится после подключения серверной базы игроков.</p>
-<div class="stats">Твой локальный рекорд: <b id="mybest">0</b></div>
-<p class="small">Мы не показываем выдуманных игроков и результаты.</p>
+<h2>🏆 Таблица рекордов</h2>
+<p>Пока показываются только твои результаты. Общий топ-10 подключим через базу данных.</p>
+<div id="records"></div>
 </div>
 </section>
-
-<section id="profile" class="page">
+<section id="profile">
 <div class="card">
-<h2>👤 Профиль</h2>
-<div class="stats">🪙 Баланс: <b id="profileCoins">0</b></div>
-<div class="stats">🎮 Сыграно партий сегодня: <b id="plays">0</b></div>
-<div class="stats">🏆 Рекорд: <b id="record">0</b></div>
-<p class="small">Это локальная демоверсия. Результаты можно изменить через браузер, поэтому они не подходят для настоящих наград.</p>
+<h2>👤 Профиль игрока</h2>
+<div class="row"><span>Имя</span><b id="username">Игрок</b></div>
+<div class="row"><span>Монеты</span><b id="profileCoins">0</b></div>
+<div class="row"><span>Сыграно партий</span><b id="profilePlayed">0</b></div>
+<div class="row"><span>Лучший результат</span><b id="profileBest">0</b></div>
+</div>
+<div class="card">
+<h2>🔒 Администрирование</h2>
+<p>Настоящая админка с просмотром игроков и управлением наградами будет доступна только после серверной проверки Telegram ID.</p>
 </div>
 </section>
-
 </main>
-
 <nav>
-<button class="active" onclick="openPage('home')">🏠<br>Главная</button>
-<button onclick="openPage('games')">🎮<br>Игры</button>
-<button onclick="openPage('friends')">👥<br>Друзья</button>
-<button onclick="openPage('rating')">🏆<br>Топ</button>
-<button onclick="openPage('profile')">👤<br>Профиль</button>
+<button data-page="home" class="on" onclick="page('home')"><span>⌂</span>Главная</button>
+<button data-page="games" onclick="page('games')"><span>🎮</span>Игры</button>
+<button data-page="friends" onclick="page('friends')"><span>👥</span>Друзья</button>
+<button data-page="top" onclick="page('top')"><span>🏆</span>Топ</button>
+<button data-page="profile" onclick="page('profile')"><span>👤</span>Профиль</button>
 </nav>
-
+<div id="toast"></div>
 <script>
-const BOT="game_shop_rewards_bot";
-const KEY="gameshop2_demo";
-const date=()=>new Date().toLocaleDateString("en-CA");
-let data={};
-try{data=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){}
-if(data.day!==date()){
- data={day:date(),coins:data.coins||0,daily:0,plays:0,best:data.best||0,task2:false};
-}
-data.coins=Number(data.coins)||0;
-data.daily=Number(data.daily)||0;
-data.plays=Number(data.plays)||0;
-data.best=Number(data.best)||0;
-
-function save(){
- localStorage.setItem(KEY,JSON.stringify(data));
- document.getElementById("coins").textContent=data.coins;
- document.getElementById("daily").textContent=data.daily;
- document.getElementById("best").textContent=data.best;
- document.getElementById("mybest").textContent=data.best;
- document.getElementById("record").textContent=data.best;
- document.getElementById("profileCoins").textContent=data.coins;
- document.getElementById("plays").textContent=data.plays;
- document.getElementById("task1").textContent=Math.min(data.plays,3)+"/3";
- document.getElementById("task2").textContent=data.task2?"Выполнено":"Не выполнено";
-}
-function openPage(id){
- stopGame();
- document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
- document.getElementById(id).classList.add("active");
- const names=["home","games","friends","rating","profile"];
- document.querySelectorAll("nav button").forEach((b,i)=>b.classList.toggle("active",names[i]===id));
- window.scrollTo(0,0);
-}
-function shareBot(){
- const url="https://t.me/"+BOT;
- if(navigator.share)navigator.share({title:"GAME SHOP",text:"Поиграй со мной!",url}).catch(()=>{});
- else prompt("Скопируй ссылку:",url);
-}
-
-const canvas=document.getElementById("screen");
-const ctx=canvas.getContext("2d");
-const W=320,H=420;
-let mode=0,running=false,frame=0,score=0,hp=3;
-let player={x:160,y:365};
-let enemies=[],shots=[],walls=[],goal={x:290,y:35};
-let keys={left:false,right:false,fire:false};
-let raf=0,runId=0,lastTime=0;
-const titles=[
- "🚀 Space Battle",
- "☄️ Asteroid Escape",
- "🛡️ Tank Arena",
- "👾 Alien Invasion",
- "⚡ Laser Maze"
+const tg=window.Telegram?.WebApp;
+try{tg?.ready();tg?.expand()}catch(e){}
+const $=id=>document.getElementById(id);
+const saveKey="gameshop_cyber_v1";
+let data;
+try{data=JSON.parse(localStorage.getItem(saveKey))}catch(e){}
+if(!data||typeof data!=="object")data={coins:0,best:0,played:0,records:{}};
+data.records ||= {};
+const modes=[
+["🚀","Space Battle","Космическая стрелялка","Двигай корабль, стреляй по противникам и избегай столкновений."],
+["🛡️","Tank Arena","Танковая дуэль","Уничтожай вражеские танки, уклоняйся от снарядов."],
+["☄️","Asteroid Rush","Полоса препятствий","Маневрируй между падающими астероидами."],
+["⚡","Laser Maze","Лазерный лабиринт","Проходи через движущиеся лазерные ворота."],
+["👾","Base Defense","Оборона базы","Защищай базу от наступающих пришельцев."]
 ];
-const descriptions=[
- "Уничтожай вражеские корабли и уклоняйся от них.",
- "Переживи астероидный дождь. Скорость растёт.",
- "Уничтожай танки противника и береги здоровье.",
- "Отрази волны инопланетян.",
- "Пройди лабиринт и доберись до зелёного выхода."
-];
-
-function selectGame(i){
- stopGame();
- mode=i;
- document.getElementById("gameTitle").textContent=titles[i];
- document.getElementById("gameInfo").textContent=descriptions[i];
- drawIdle();
+let mode=0,running=false,raf=0,score=0,hp=3,frame=0;
+let player={x:180,y:426,w:30,h:30},entities=[],bullets=[],sparks=[];
+let input={left:false,right:false,fire:false},last=0;
+function persist(){localStorage.setItem(saveKey,JSON.stringify(data))}
+function refresh(){
+$("coins").textContent=data.coins;
+$("best").textContent=data.best;
+$("played").textContent=data.played;
+$("profileCoins").textContent=data.coins;
+$("profileBest").textContent=data.best;
+$("profilePlayed").textContent=data.played;
+const name=tg?.initDataUnsafe?.user?.first_name;
+$("username").textContent=name||"Игрок";
+$("records").innerHTML=modes.map((m,i)=>'<div class="row"><span>'+m[0]+' '+m[1]+'</span><b class="rank">'+(data.records[i]||0)+'</b></div>').join("");
+}
+function toast(s){$("toast").textContent=s;$("toast").style.display="block";setTimeout(()=>$("toast").style.display="none",2200)}
+function page(p){
+if(running&&p!=="games")stopGame();
+document.querySelectorAll("section").forEach(x=>x.classList.toggle("active",x.id===p));
+document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on",x.dataset.page===p));
+refresh();window.scrollTo(0,0);
+}
+function selectMode(i){
+stopGame();mode=i;
+$("gameTitle").textContent=modes[i][0]+" "+modes[i][1];
+$("gameDesc").textContent=modes[i][3];
+document.querySelectorAll(".game-tile").forEach((x,j)=>x.classList.toggle("selected",i===j));
+$("fire").style.display=i===2||i===3?"none":"block";
+$("instructions").textContent=i===2||i===3?"Двигайся стрелками или пальцем. Избегай препятствий.":"Управляй стрелками или пальцем. Удерживай ОГОНЬ для стрельбы.";
+drawIdle();
+}
+$("gameGrid").innerHTML=modes.map((m,i)=>'<button class="game-tile" onclick="selectMode('+i+')"><span class="emoji">'+m[0]+'</span><strong>'+m[1]+'</strong><small>'+m[2]+'</small></button>').join("");
+const c=$("arena"),ctx=c.getContext("2d"),W=360,H=480;
+function rect(x,y,w,h,color){ctx.fillStyle=color;ctx.fillRect(x,y,w,h)}
+function circle(x,y,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
+function text(s,x,y,size,color="#fff"){ctx.fillStyle=color;ctx.font="bold "+size+"px system-ui";ctx.textAlign="center";ctx.fillText(s,x,y)}
+function background(){
+ctx.fillStyle="#05091a";ctx.fillRect(0,0,W,H);
+for(let i=0;i<45;i++){let x=(i*97+13)%W,y=(i*67+frame*(i%3+1)*.25)%H;circle(x,y,i%4===0?1.5:.7,"#47648e")}
+ctx.strokeStyle="#102b48";ctx.lineWidth=1;
+for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
+}
+function drawPlayer(){
+if(mode===1){rect(player.x-18,player.y-12,36,25,"#36d69b");rect(player.x-4,player.y-25,8,24,"#9df9c7");rect(player.x-22,player.y-14,7,30,"#668e8c");rect(player.x+15,player.y-14,7,30,"#668e8c")}
+else if(mode===4){rect(player.x-19,player.y-10,38,22,"#00dfff");rect(player.x-5,player.y-25,10,20,"#d2faff")}
+else{ctx.fillStyle="#00eaff";ctx.beginPath();ctx.moveTo(player.x,player.y-24);ctx.lineTo(player.x-20,player.y+18);ctx.lineTo(player.x,player.y+9);ctx.lineTo(player.x+20,player.y+18);ctx.closePath();ctx.fill();rect(player.x-5,player.y+9,10,12,"#ff3ca6")}
 }
 function drawIdle(){
- ctx.fillStyle="#080d25";
- ctx.fillRect(0,0,W,H);
- ctx.fillStyle="#00f5ff";
- ctx.textAlign="center";
- ctx.font="bold 20px Arial";
- ctx.fillText(titles[mode],160,190);
- ctx.font="14px Arial";
- ctx.fillStyle="#b3bddc";
- ctx.fillText("Нажми «Начать игру»",160,220);
+frame=0;background();drawPlayer();text(modes[mode][1],180,170,27,"#00eaff");text("НАЖМИ «НАЧАТЬ ИГРУ»",180,215,15,"#d0d9f7");
 }
 function startGame(){
- stopGame();
- running=true;
- runId++;
- frame=0;score=0;hp=3;
- player={x:160,y:365};
- enemies=[];shots=[];
- keys={left:false,right:false,fire:false};
- data.plays++;
- save();
- if(mode===4)makeMaze();
- document.getElementById("status").textContent="Очки: 0 | Жизни: 3";
- lastTime=performance.now();
- const id=runId;
- raf=requestAnimationFrame(t=>loop(t,id));
+stopGame();
+running=true;score=0;hp=3;frame=0;entities=[];bullets=[];sparks=[];
+player.x=180;player.y=mode===4?440:426;
+last=performance.now();$("startBtn").textContent="↻ ПЕРЕЗАПУСТИТЬ";
+raf=requestAnimationFrame(loop);
 }
-function stopGame(){
- running=false;
- runId++;
- cancelAnimationFrame(raf);
- keys={left:false,right:false,fire:false};
+function stopGame(){running=false;cancelAnimationFrame(raf);input.left=input.right=input.fire=false}
+function finish(){
+if(!running)return;
+stopGame();data.played++;
+const pts=Math.floor(score);
+const old=data.records[mode]||0;
+data.records[mode]=Math.max(old,pts);data.best=Math.max(data.best,pts);
+const reward=Math.min(3,Math.floor(pts/180));
+data.coins+=reward;
+persist();refresh();
+background();drawPlayer();text("ИГРА ОКОНЧЕНА",180,178,28,"#ff3ca6");text("СЧЁТ: "+pts,180,218,23,"#fff");text("+"+reward+" тестовых монет",180,252,16,"#ffcc55");
+$("startBtn").textContent="↻ ИГРАТЬ СНОВА";
 }
-function endGame(win){
- if(!running)return;
- running=false;
- cancelAnimationFrame(raf);
- data.best=Math.max(data.best,score);
- if(score>=100)data.task2=true;
- let reward=0;
- if(win&&score>=100)reward=3;
- else if(score>=50)reward=1;
- reward=Math.min(reward,Math.max(0,30-data.daily));
- data.coins+=reward;
- data.daily+=reward;
- save();
- document.getElementById("status").textContent=
- (win?"Победа! ":"Игра окончена. ")+
- "Очки: "+score+" | +"+reward+" 🪙";
+function collide(a,b,r=0){return Math.abs(a.x-b.x)<(a.w+b.w)/2+r&&Math.abs(a.y-b.y)<(a.h+b.h)/2+r}
+function burst(x,y,color){for(let i=0;i<9;i++)sparks.push({x,y,vx:(Math.random()-.5)*7,vy:(Math.random()-.5)*7,t:20,color})}
+function spawn(){
+const x=25+Math.random()*310;
+if(mode===0)entities.push({x,y:-25,w:29,h:27,vy:1.7+frame/1700,hp:2,type:"enemy",shoot:Math.random()*90});
+if(mode===1)entities.push({x,y:-25,w:35,h:29,vy:1.1+frame/2200,hp:3,type:"tank",shoot:Math.random()*90});
+if(mode===2)entities.push({x,y:-30,w:22+Math.random()*30,h:25,vy:2.4+frame/900,type:"rock"});
+if(mode===3){let gap=85;entities.push({x:Math.random()*(W-gap-35)+gap/2+18,y:-12,w:gap,h:13,vy:2.1+frame/1300,type:"laser"})}
+if(mode===4)entities.push({x,y:-20,w:28,h:27,vy:1.1+frame/1700,hp:2,type:"alien"});
 }
-function loop(time,id){
- if(!running||id!==runId)return;
- if(time-lastTime<16){
-  raf=requestAnimationFrame(t=>loop(t,id));
-  return;
- }
- lastTime=time;
- frame++;
- update();
- draw();
- document.getElementById("status").textContent="Очки: "+score+" | Жизни: "+hp;
- if(running)raf=requestAnimationFrame(t=>loop(t,id));
+function drawEntity(e){
+if(e.type==="enemy"){rect(e.x-14,e.y-12,28,24,"#ff3ca6");rect(e.x-20,e.y-4,40,9,"#ab337b");rect(e.x-5,e.y+8,10,8,"#ffb7e0")}
+if(e.type==="tank"){rect(e.x-17,e.y-13,34,26,"#ff934a");rect(e.x-5,e.y+4,10,21,"#ffcc77");rect(e.x-21,e.y-15,7,30,"#875c54");rect(e.x+14,e.y-15,7,30,"#875c54")}
+if(e.type==="rock"){circle(e.x,e.y,e.w/2,"#947e9a");circle(e.x-5,e.y-3,e.w/6,"#51435f");circle(e.x+7,e.y+7,e.w/8,"#5e4b68")}
+if(e.type==="laser"){rect(0,e.y,Math.max(0,e.x-e.w/2),e.h,"#ff3ca6");rect(e.x+e.w/2,e.y,W-e.x-e.w/2,e.h,"#ff3ca6");rect(0,e.y+3,Math.max(0,e.x-e.w/2),3,"#ffd3ee");rect(e.x+e.w/2,e.y+3,W-e.x-e.w/2,3,"#ffd3ee")}
+if(e.type==="alien"){circle(e.x,e.y,14,"#83ff7d");rect(e.x-18,e.y+1,36,9,"#3dbb85");circle(e.x-6,e.y-2,3,"#101728");circle(e.x+6,e.y-2,3,"#101728")}
 }
-function update(){
- if(mode===4){
-  updateMaze();
-  return;
- }
- if(keys.left)player.x-=4;
- if(keys.right)player.x+=4;
- player.x=Math.max(15,Math.min(305,player.x));
- const rate=mode===3?11:mode===2?15:9;
- if(mode!==1&&frame%rate===0){
-  shots.push({x:player.x,y:player.y-15});
- }
- if(mode!==1&&keys.fire&&frame%5===0){
-  shots.push({x:player.x,y:player.y-15});
- }
- shots.forEach(s=>s.y-=7);
- shots=shots.filter(s=>s.y>-10);
- const spawn=mode===1?14:mode===3?29:mode===2?36:24;
- if(frame%Math.max(9,spawn-Math.floor(frame/350))===0){
-  enemies.push({
-   x:20+Math.random()*280,
-   y:-20,
-   r:mode===1?10+Math.random()*10:14,
-   hp:mode===2?2:1,
-   speed:1.8+Math.min(3,frame/500)
-  });
- }
- enemies.forEach(e=>e.y+=e.speed);
- for(let i=enemies.length-1;i>=0;i--){
-  const e=enemies[i];
-  if(Math.abs(e.x-player.x)<e.r+12&&Math.abs(e.y-player.y)<e.r+12){
-   enemies.splice(i,1);
-   hp--;
-   if(hp<=0){endGame(false);return}
-   continue;
-  }
-  if(e.y>H+25){
-   enemies.splice(i,1);
-   if(mode!==1){
-    hp--;
-    if(hp<=0){endGame(false);return}
-   }else score+=1;
-   continue;
-  }
-  if(mode!==1){
-   for(let j=shots.length-1;j>=0;j--){
-    const s=shots[j];
-    if(Math.hypot(e.x-s.x,e.y-s.y)<e.r+5){
-     shots.splice(j,1);
-     e.hp--;
-     if(e.hp<=0){
-      enemies.splice(i,1);
-      score+=10;
-     }
-     break;
-    }
-   }
-  }
- }
- if(mode===1&&frame%60===0)score+=2;
- if(frame>=1800)endGame(score>=100);
+function loop(now){
+if(!running)return;
+let dt=Math.min(2,(now-last)/16.67||1);last=now;frame+=dt;
+if(input.left)player.x-=4.7*dt;
+if(input.right)player.x+=4.7*dt;
+player.x=Math.max(24,Math.min(W-24,player.x));
+if(mode===4)player.y=440;
+const interval=Math.max(19,75-Math.floor(frame/120));
+if(Math.floor(frame)%interval<dt)spawn();
+if(input.fire&&mode!==2&&mode!==3&&Math.floor(frame)%10<dt){
+bullets.push({x:player.x,y:player.y-24,w:5,h:14,vy:-8,type:"own"});
 }
-function draw(){
- ctx.fillStyle="#080d25";
- ctx.fillRect(0,0,W,H);
- for(let i=0;i<35;i++){
-  let x=(i*83)%320,y=(i*127+frame)%420;
-  ctx.fillStyle="#33476c";
-  ctx.fillRect(x,y,2,2);
- }
- if(mode===4){drawMaze();return}
- ctx.textAlign="center";
- ctx.font="25px Arial";
- ctx.fillText(mode===2?"🛡️":"🚀",player.x,player.y+8);
- enemies.forEach(e=>{
-  ctx.beginPath();
-  ctx.fillStyle=mode===1?"#ff9a45":mode===3?"#bb6cff":"#ff4f91";
-  ctx.arc(e.x,e.y,e.r,0,Math.PI*2);
-  ctx.fill();
-  ctx.fillStyle="#fff";
-  ctx.font="15px Arial";
-  ctx.fillText(mode===1?"☄":mode===2?"✖":"👾",e.x,e.y+5);
- });
- ctx.fillStyle="#00f5ff";
- shots.forEach(s=>ctx.fillRect(s.x-2,s.y-9,4,13));
- ctx.fillStyle="white";
- ctx.font="14px Arial";
- ctx.textAlign="left";
- ctx.fillText("❤️ "+hp+"    ⭐ "+score,10,22);
+background();
+for(const b of bullets){b.y+=b.vy*dt;rect(b.x-3,b.y-8,6,16,b.type==="own"?"#00eaff":"#ffb24a")}
+for(const e of entities){
+e.y+=e.vy*dt;
+if((e.type==="enemy"||e.type==="tank")&&Math.random()<.006+frame/300000){
+bullets.push({x:e.x,y:e.y+20,w:7,h:13,vy:3.5,type:"hostile"});
 }
-
-const CELL=40;
-let maze=[],mx=0,my=0;
-function makeMaze(){
- maze=[
- "########",
- "#......#",
- "#.####.#",
- "#.#....#",
- "#.#.##.#",
- "#...#..#",
- "###.#.##",
- "#...#..#",
- "#.###..#",
- "#......#"
- ];
- mx=1;my=9;
- goal={x:6,y:1};
- player.x=mx*CELL+20;
- player.y=my*CELL+20;
+if(e.type==="laser"){
+if(Math.abs(e.y-player.y)<16&&(player.x<e.x-e.w/2+14||player.x>e.x+e.w/2-14)&&!e.hit){hp--;e.hit=true;burst(player.x,player.y,"#ff3ca6")}
+}else if(collide(player,e,0)&&!e.hit){
+hp--;e.hit=true;e.dead=true;burst(player.x,player.y,"#ff3ca6");
 }
-function updateMaze(){
- if(frame%60===0)score+=1;
- if(frame>2400)endGame(false);
+if(mode===4&&e.y>435&&!e.dead){hp--;e.dead=true;burst(e.x,435,"#ff3ca6")}
+else if(e.y>H+35&&!e.dead){e.dead=true;if(mode===2||mode===3)score+=12}
+drawEntity(e);
 }
-function moveMaze(dx,dy){
- if(!running||mode!==4)return;
- const nx=mx+dx,ny=my+dy;
- if(ny<0||ny>=maze.length||nx<0||nx>=8)return;
- if(maze[ny][nx]==="#")return;
- mx=nx;my=ny;
- player.x=mx*CELL+20;
- player.y=my*CELL+20;
- score+=5;
- if(mx===goal.x&&my===goal.y){
-  score+=100;
-  draw();
-  endGame(true);
- }
+for(const b of bullets){
+if(b.type==="hostile"&&collide(player,b)){hp--;b.dead=true;burst(player.x,player.y,"#ff934a")}
+if(b.type==="own")for(const e of entities){
+if(e.dead||e.type==="rock"||e.type==="laser")continue;
+if(collide(e,b)){b.dead=true;e.hp--;burst(b.x,b.y,"#ffcc55");if(e.hp<=0){e.dead=true;score+=mode===1?30:20}break}
 }
-function drawMaze(){
- for(let y=0;y<maze.length;y++){
-  for(let x=0;x<8;x++){
-   ctx.fillStyle=maze[y][x]==="#"?"#263d80":"#101936";
-   ctx.fillRect(x*CELL+1,y*CELL+1,CELL-2,CELL-2);
-  }
- }
- ctx.fillStyle="#00f5a0";
- ctx.fillRect(goal.x*CELL+8,goal.y*CELL+8,24,24);
- ctx.fillStyle="#ffdd55";
- ctx.beginPath();
- ctx.arc(player.x,player.y,12,0,Math.PI*2);
- ctx.fill();
 }
-
-function bindButton(id,key){
- const b=document.getElementById(id);
- b.addEventListener("pointerdown",e=>{
-  e.preventDefault();
-  if(mode===4){
-   if(key==="left")moveMaze(-1,0);
-   if(key==="right")moveMaze(1,0);
-   if(key==="fire")moveMaze(0,-1);
-  }else keys[key]=true;
- });
- for(const ev of ["pointerup","pointercancel","pointerleave"]){
-  b.addEventListener(ev,()=>keys[key]=false);
- }
+for(const s of sparks){s.x+=s.vx*dt;s.y+=s.vy*dt;s.t-=dt;circle(s.x,s.y,2,s.color)}
+sparks=sparks.filter(s=>s.t>0);
+bullets=bullets.filter(b=>!b.dead&&b.y>-25&&b.y<H+25);
+entities=entities.filter(e=>!e.dead&&e.y<H+45);
+drawPlayer();
+score+=dt*.035;
+$("score").textContent=Math.floor(score);
+$("hp").textContent=Math.max(0,hp);
+$("level").textContent=1+Math.floor(frame/900);
+if(hp<=0){finish();return}
+raf=requestAnimationFrame(loop);
 }
-bindButton("left","left");
-bindButton("right","right");
-bindButton("fire","fire");
-
-canvas.addEventListener("pointerdown",e=>{
- if(!running)return;
- const rect=canvas.getBoundingClientRect();
- const x=(e.clientX-rect.left)*W/rect.width;
- if(mode===4){
-  moveMaze(0,1);
- }else{
-  player.x=Math.max(15,Math.min(305,x));
- }
-});
-drawIdle();
-save();
+function bindControl(id,key){
+const el=$(id);
+el.addEventListener("pointerdown",e=>{e.preventDefault();input[key]=true;el.setPointerCapture(e.pointerId)});
+el.addEventListener("pointerup",()=>input[key]=false);
+el.addEventListener("pointercancel",()=>input[key]=false);
+el.addEventListener("lostpointercapture",()=>input[key]=false);
+}
+bindControl("left","left");bindControl("right","right");bindControl("fire","fire");
+c.addEventListener("pointerdown",e=>{if(!running)return;moveTouch(e);if(mode!==2&&mode!==3)input.fire=true});
+c.addEventListener("pointermove",e=>{if(e.buttons)moveTouch(e)});
+c.addEventListener("pointerup",()=>input.fire=false);
+c.addEventListener("pointercancel",()=>input.fire=false);
+function moveTouch(e){const r=c.getBoundingClientRect();player.x=Math.max(24,Math.min(336,(e.clientX-r.left)*W/r.width))}
+window.addEventListener("keydown",e=>{if(e.key==="ArrowLeft")input.left=true;if(e.key==="ArrowRight")input.right=true;if(e.code==="Space")input.fire=true});
+window.addEventListener("keyup",e=>{if(e.key==="ArrowLeft")input.left=false;if(e.key==="ArrowRight")input.right=false;if(e.code==="Space")input.fire=false});
+document.addEventListener("visibilitychange",()=>{if(document.hidden&&running)finish()});
+function invite(){
+const link="https://t.me/game_shop_rewards_bot";
+const url="https://t.me/share/url?url="+encodeURIComponent(link)+"&text="+encodeURIComponent("Заходи в GAME SHOP — сыграем!");
+if(tg?.openTelegramLink)tg.openTelegramLink(url);
+else window.open(url,"_blank");
+}
+selectMode(0);refresh();
 </script>
 </body>
 </html>
